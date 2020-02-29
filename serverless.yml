@@ -6,12 +6,19 @@ custom:
     includeModules: true
     packager: 'yarn'
 
+  settings:
+    MDB_USERNAME: ${ssm:reenlee-mongodb-username}
+    MDB_PASSWORD: ${ssm:reenlee-mongodb-password}
+    MDB_DATABASE: ${ssm:reenlee-mongodb-database}-${self:provider.stage}
+
 provider:
   name: aws
+  stage: dev
   runtime: nodejs12.x
   websocketsApiRouteSelectionExpression: '$request.body.route'
   region: us-east-1
   profile: reenlee-admin
+  environment: ${self:custom.settings}
 
 plugins:
   - serverless-offline
