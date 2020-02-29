@@ -15,11 +15,10 @@ provider:
 
 plugins:
   - serverless-offline
-  - serverless-domain-manager
   - serverless-webpack
 
 functions:
-  create_user:
+  create_user1:
     handler: src/create_user.handler
     events:
       - http:
@@ -27,7 +26,7 @@ functions:
           path: /create_user
           cors: true
 
-  authenticate_user:
+  authenticate_user1:
     handler: src/authenticate_user.handler
     events:
       - http:
@@ -35,17 +34,17 @@ functions:
           path: /authenticate_user
           cors: true
 
-  default:
+  default1:
     handler: src/websocket/default.handler
     events:
       - websocket: $default
 
-  connect:
+  connect1:
     handler: src/websocket/connect.handler
     events:
       - websocket: $connect
 
-  disconnect:
+  disconnect1:
     handler: src/websocket/disconnect.handler
     events:
       - websocket: $disconnect
