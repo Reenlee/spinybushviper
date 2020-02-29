@@ -3,14 +3,38 @@ service: spinybushviper
 provider:
   name: aws
   runtime: nodejs12.x
+  websocketsApiRouteSelectionExpression: '$request.body.route'
   region: us-east-1
   profile: reenlee-admin
 
 functions:
-  hello:
-    handler: handler.hello
+  create_user:
+    handler: src/create_user.handler
     events:
       - http:
           method: get
-          path: /hello
+          path: /create_user
           cors: true
+
+  authenticate_user:
+    handler: src/authenticate_user.handler
+    events:
+      - http:
+          method: get
+          path: /authenticate_user
+          cors: true
+
+  default:
+    handler: src/websocket/default.handler
+    events:
+      - websocket: $default
+
+  connect:
+    handler: src/websocket/connect.handler
+    events:
+      - websocket: $connect
+
+  disconnect:
+    handler: src/websocket/disconnect.handler
+    events:
+      - websocket: $disconnect

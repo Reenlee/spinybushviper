@@ -1,0 +1,9 @@
+{
+  "extends": ["wesbos"],
+  "rules": {
+    "camelcase": 1,
+    "no-use-before-define": 1,
+    "no-plusplus": 1,
+    "no-empty": 1
+  }
+}
