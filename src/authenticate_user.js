@@ -1,12 +1,16 @@
-export const handler = evt => {
+export const handler = async event => {
   try {
     console.log('hello world');
     return {
       statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Hello, authenticated user' }),
+      body: JSON.stringify(
+        {
+          message: 'G.o.d.o',
+          input: event,
+        },
+        null,
+        2
+      ),
     };
   } catch (err) {
     console.log(err);
