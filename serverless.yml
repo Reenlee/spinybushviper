@@ -13,6 +13,11 @@ provider:
   region: us-east-1
   profile: reenlee-admin
 
+plugins:
+  - serverless-offline
+  - serverless-domain-manager
+  - serverless-webpack
+
 functions:
   create_user:
     handler: src/create_user.handler
