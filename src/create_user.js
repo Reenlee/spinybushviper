@@ -1,6 +1,11 @@
-export const handler = () => ({
+module.exports.handler = async event => ({
   statusCode: 200,
-  body: JSON.stringify({
-    message: 'create_user',
-  }),
+  body: JSON.stringify(
+    {
+      message: 'G.o.d',
+      input: event,
+    },
+    null,
+    2
+  ),
 });
