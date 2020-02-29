@@ -8,8 +8,8 @@ export async function connectDB(collection) {
   const database = process.env.MDB_DATABASE;
 
   if (typeof client === 'undefined') {
-    const uri = `mongodb+srv://${username}:${password}@gorilla-xgquu.mongodb.net/${database}?retryWrites=true&w=majority`;
-
+    const uri = `mongodb+srv://${username}:${password}@cluster0-sb1ds.mongodb.net/${database}?retryWrites=true&w=majority`;
+    
     client = new MongoClient(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
