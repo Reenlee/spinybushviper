@@ -2,7 +2,7 @@ import { connectDB } from './mongodb';
 
 export const handler = async () => {
   try {
-    const x = { text: 'abcd' };
+    const x = { username: 'i do not know', passowrd: 'something secret' };
 
     const db = await connectDB('test');
     await db.insertOne(x);
