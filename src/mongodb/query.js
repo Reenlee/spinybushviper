@@ -5,10 +5,39 @@ export const findOneAsync = async (collection, query, project) => {
   return db.findOne(query, project);
 };
 
-export const findManyAsync = async (collection, query, project) => {
+export const listManyAsync = async (collection, query, sort, project) => {
   const db = await connectDB(collection);
   return db
     .find(query)
+    .sort(sort)
+    .project(project)
+    .toArray();
+};
+
+export const listManyInAsync = async (
+  collection,
+  key,
+  value,
+  query = {},
+  sort,
+  project
+) => {
+  const db = await connectDB(collection);
+  return db
+    .find({ [key]: { $in: value }, ...query })
+    .sort(sort)
+    .project(project)
+    .toArray();
+};
+
+export const listManyOrAsync = async (collection, or, query, sort, project) => {
+  const db = await connectDB(collection);
+  return db
+    .find({
+      $or: or,
+      ...query,
+    })
+    .sort(sort)
     .project(project)
     .toArray();
 };
@@ -20,25 +49,59 @@ export const insertOneAsync = async (collection, data) => {
 
 export const insertManyAsync = async (collection, data) => {
   const db = await connectDB(collection);
-  return db.insertMany(data);
+  return (await db.insertMany(data)).ops;
 };
 
-export const updateOneAsync = async (collection, ...query) => {
-  const db = await connectDB(collection);
-  const { value } = await db.findOneAndUpdate(...query);
-  return value;
-};
-
-export const updateManyAsync = async (collection, ...query) => {
-  const db = await connectDB(collection);
-  const { value } = await db.updateMany(...query);
-  return value;
-};
-
-export const deleteOneAsync = async (collection, ...query) => {
+export const updateOneAsync = async (collection, query, data) => {
   const db = await connectDB(collection);
   const { value } = await db.findOneAndUpdate(
-    ...query,
+    query,
+    { $set: data },
+    { returnOriginal: false }
+  );
+  return value;
+};
+
+export const upsertOneAsync = async (collection, query, data) => {
+  const db = await connectDB(collection);
+  const { value } = await db.findOneAndUpdate(
+    query,
+    { $set: data },
+    { returnOriginal: false, upsert: true }
+  );
+  return value;
+};
+
+export const pushItemsAsync = async (collection, query, data) => {
+  const db = await connectDB(collection);
+  const { value } = await db.findOneAndUpdate(
+    query,
+    { $push: data },
+    { returnOriginal: false }
+  );
+  return value;
+};
+
+export const pullItemsAsync = async (collection, query, data) => {
+  const db = await connectDB(collection);
+  const { value } = await db.findOneAndUpdate(
+    query,
+    { $pull: data },
+    { returnOriginal: false }
+  );
+  return value;
+};
+
+export const updateManyAsync = async (collection, query, data) => {
+  const db = await connectDB(collection);
+  const { value } = await db.updateMany(query, { $set: data });
+  return value;
+};
+
+export const deleteOneAsync = async (collection, query) => {
+  const db = await connectDB(collection);
+  const { value } = await db.findOneAndUpdate(
+    query,
     { $set: { active: false } },
     { returnOriginal: false }
   );

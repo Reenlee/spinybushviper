@@ -25,6 +25,14 @@ plugins:
   - serverless-webpack
 
 functions:
+  save_record:
+    handler: src/save_record.handler
+    events:
+      - http:
+          method: get
+          path: /save_record
+          cors: true
+
   create_user1:
     handler: src/create_user.handler
     events:

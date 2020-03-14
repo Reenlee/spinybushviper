@@ -1,24 +1,24 @@
 import { MongoClient } from 'mongodb';
 
-let client;
-
 export async function connectDB(collection) {
   const username = process.env.MDB_USERNAME;
   const password = process.env.MDB_PASSWORD;
   const database = process.env.MDB_DATABASE;
 
-  if (typeof client === 'undefined') {
+  console.log(username, password, database);
+  if (typeof global.client === 'undefined') {
+    console.log('client is undefined. connecting again.');
     const uri = `mongodb+srv://${username}:${password}@cluster0-sb1ds.mongodb.net/${database}?retryWrites=true&w=majority`;
-    
-    client = new MongoClient(uri, {
+
+    global.client = new MongoClient(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
 
-    await client.connect();
+    await global.client.connect();
   }
 
-  return client.db(database).collection(collection);
+  return global.client.db(database).collection(collection);
 }
 
 // How to run local mongodb
