@@ -25,41 +25,33 @@ plugins:
   - serverless-webpack
 
 functions:
-  save_record:
-    handler: src/save_record.handler
+  signup:
+    handler: src/signup.handler
     events:
       - http:
-          method: get
-          path: /save_record
+          method: post
+          path: /signup
           cors: true
 
-  create_user1:
-    handler: src/create_user.handler
+  login:
+    handler: src/login.handler
     events:
       - http:
-          method: get
-          path: /create_user
+          method: post
+          path: /login
           cors: true
 
-  authenticate_user1:
-    handler: src/authenticate_user.handler
-    events:
-      - http:
-          method: get
-          path: /authenticate_user
-          cors: true
-
-  default1:
+  default:
     handler: src/websocket/default.handler
     events:
       - websocket: $default
 
-  connect1:
+  connect:
     handler: src/websocket/connect.handler
     events:
       - websocket: $connect
 
-  disconnect1:
+  disconnect:
     handler: src/websocket/disconnect.handler
     events:
       - websocket: $disconnect
