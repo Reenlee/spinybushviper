@@ -1,14 +1,14 @@
 import uuid from 'uuid';
-import * as jwt from 'jsonwebtoken';
-
-import { JWT_PASSWORD } from './contants';
-import { insertOneAsync, listManyAsync } from './mongodb/query';
+import { insertOneAsync, listManyAsync } from '../mongodb/query';
+import { encode } from '../helpers/token';
 
 export const handler = async evt => {
   try {
     const { body } = evt;
     const data = JSON.parse(body);
     data.id = uuid.v4();
+    data.friends = [];
+    data.connections = [];
 
     const users = await listManyAsync('users');
     users.forEach(p => {
@@ -18,7 +18,7 @@ export const handler = async evt => {
     });
 
     const user = await insertOneAsync('users', data);
-    const token = jwt.sign({ userId: user.id }, JWT_PASSWORD);
+    const token = encode({ userId: user.id });
 
     return {
       statusCode: 200,

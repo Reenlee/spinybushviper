@@ -1,7 +1,5 @@
-import * as jwt from 'jsonwebtoken';
-
-import { JWT_PASSWORD } from './contants';
-import { findOneAsync } from './mongodb/query';
+import { findOneAsync } from '../mongodb/query';
+import { encode } from '../helpers/token';
 
 export const handler = async evt => {
   try {
@@ -17,7 +15,7 @@ export const handler = async evt => {
       throw new Error('User does not exist');
     }
 
-    const token = jwt.sign({ userId: user.id }, JWT_PASSWORD);
+    const token = encode({ userId: user.id });
 
     return {
       statusCode: 200,

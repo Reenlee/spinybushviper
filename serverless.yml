@@ -26,7 +26,7 @@ plugins:
 
 functions:
   signup:
-    handler: src/signup.handler
+    handler: src/routes/signup.handler
     events:
       - http:
           method: post
@@ -34,11 +34,27 @@ functions:
           cors: true
 
   login:
-    handler: src/login.handler
+    handler: src/routes/login.handler
     events:
       - http:
           method: post
           path: /login
+          cors: true
+
+  add_friend:
+    handler: src/routes/friends/add.handler
+    events:
+      - http:
+          method: post
+          path: /friends/add
+          cors: true
+
+  list_friends:
+    handler: src/routes/friends/list.handler
+    events:
+      - http:
+          method: post
+          path: /friends/list
           cors: true
 
   default:
