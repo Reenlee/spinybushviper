@@ -10,14 +10,11 @@ export const handler = async evt => {
 
     const { username } = data;
     const user = await User.find({ username });
-
-    await User.push({ id: auth.userId }, { friends: user.id });
+    const friend = await User.push({ id: auth.userId }, { friends: user.id });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        message: 'Successfully add a new friend!',
-      }),
+      body: JSON.stringify(friend),
     };
   } catch (err) {
     console.log(err);

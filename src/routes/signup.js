@@ -18,7 +18,7 @@ export const handler = async evt => {
     });
 
     const user = await insertOneAsync('users', data);
-    const token = encode({ userId: user.id });
+    const token = encode({ userId: user.id, username: user.username });
 
     return {
       statusCode: 200,

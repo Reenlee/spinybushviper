@@ -1,8 +1,12 @@
 import * as AWS from 'aws-sdk';
+import uuid from 'uuid';
+
 import { verifyHeader } from '../helpers/token';
 import User from '../models/users';
+import Chat from '../models/chats';
+import Room from '../models/rooms';
 
-const sendMessageToClient = (client, connectionId, payload) =>
+const send = (client, connectionId, payload) =>
   new Promise((resolve, reject) => {
     client.postToConnection(
       {
@@ -15,7 +19,6 @@ const sendMessageToClient = (client, connectionId, payload) =>
           await User.pull({ id: user.id }, { connections: connectionId });
           reject(err);
         }
-
         resolve(data);
       }
     );
@@ -25,35 +28,43 @@ export const handler = async evt => {
   try {
     const { requestContext, body } = evt;
     const { connectionId, domainName, stage } = requestContext;
-    const { data } = JSON.parse(body);
-    const { auth_token: token, payloadType, ...payload } = data;
-    const { messageType, recipientId, channelId } = payload;
+    const { data: payload } = JSON.parse(body);
+    const { type, senderId, recipientId, roomId } = payload;
+    payload.id = uuid.v4();
 
-    const { userId } = await verifyHeader({ Authorization: token });
-
-    if (payloadType === 'connect') {
-      await User.push({ id: userId }, { connections: connectionId });
+    if (type === 'connect') {
+      await User.push({ id: senderId }, { connections: connectionId });
     }
 
-    // if (payloadType === 'send') {
-    //   const client = new AWS.ApiGatewayManagementApi({
-    //     apiVersion: '2018-11-29',
-    //     endpoint: `https://${domainName}/${stage}`,
-    //   });
+    if (type === 'send') {
+      const client = new AWS.ApiGatewayManagementApi({
+        apiVersion: '2018-11-29',
+        endpoint: `https://${domainName}/${stage}`,
+      });
 
-    //   let recipientIds = [];
-    //   payload.senderId = userId;
+      if (recipientId) {
+        const recipient = await User.find({ id: recipientId });
 
-    //   const chat = await Chat.create(payload);
-    //   const recipients = await User.listIn('id', recipientIds);
+        await Promise.all(
+          recipient.connections.map(cId => send(client, cId, payload))
+        );
+      }
 
-    //   const send = []
-    //     .concat(...recipients.map(r => r.connections))
-    //     .filter(cId => cId !== connectionId)
-    //     .map(cId => sendMessageToClient(client, cId, chat));
+      if (roomId) {
+        const room = await Room.find({ id: roomId });
+        const { userIds = [] } = room;
+        const recipients = await User.listIn('id', userIds);
 
-    //   await Promise.all(send);
-    // }
+        await Promise.all(
+          []
+            .concat(...recipients.map(r => r.connections))
+            .filter(cId => cId !== connectionId)
+            .map(cId => send(client, cId, payload))
+        );
+      }
+
+      await Chat.create(payload);
+    }
 
     return {
       statusCode: 200,
@@ -64,6 +75,7 @@ export const handler = async evt => {
     };
   } catch (err) {
     console.log(err);
+
     return {
       statusCode: 500,
       headers: {

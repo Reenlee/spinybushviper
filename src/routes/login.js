@@ -15,7 +15,7 @@ export const handler = async evt => {
       throw new Error('User does not exist');
     }
 
-    const token = encode({ userId: user.id });
+    const token = encode({ userId: user.id, username: user.username });
 
     return {
       statusCode: 200,

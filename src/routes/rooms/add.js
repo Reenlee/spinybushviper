@@ -1,19 +1,24 @@
+import uuid from 'uuid';
 import { verifyHeader } from '../../helpers/token';
-import User from '../../models/users';
+import Room from '../../models/rooms';
 
 export const handler = async evt => {
   try {
-    const { headers } = evt;
+    const { headers, body } = evt;
+    const data = JSON.parse(body);
 
     const auth = await verifyHeader(headers);
-    const user = await User.find({ id: auth.userId });
 
-    const { friends: userIds } = user;
-    const friends = await User.listIn('id', userIds);
+    const { name, userIds } = data;
+    const room = await Room.create({
+      id: uuid.v4(),
+      name,
+      userIds: userIds.concat(auth.userId),
+    });
 
     return {
       statusCode: 200,
-      body: JSON.stringify(friends),
+      body: JSON.stringify(room),
     };
   } catch (err) {
     console.log(err);

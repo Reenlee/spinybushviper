@@ -1,4 +1,5 @@
-export const handler = async () => {
+export const handler = async (a, ...b) => {
+  console.log(a, b);
   try {
     return {
       statusCode: 200,

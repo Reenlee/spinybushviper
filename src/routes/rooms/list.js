@@ -1,19 +1,16 @@
 import { verifyHeader } from '../../helpers/token';
-import User from '../../models/users';
+import Room from '../../models/rooms';
 
 export const handler = async evt => {
   try {
     const { headers } = evt;
 
     const auth = await verifyHeader(headers);
-    const user = await User.find({ id: auth.userId });
-
-    const { friends: userIds } = user;
-    const friends = await User.listIn('id', userIds);
+    const rooms = await Room.list({ userIds: auth.userId });
 
     return {
       statusCode: 200,
-      body: JSON.stringify(friends),
+      body: JSON.stringify(rooms),
     };
   } catch (err) {
     console.log(err);

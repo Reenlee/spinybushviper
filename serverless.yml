@@ -57,6 +57,30 @@ functions:
           path: /friends/list
           cors: true
 
+  add_room:
+    handler: src/routes/rooms/add.handler
+    events:
+      - http:
+          method: post
+          path: /rooms/add
+          cors: true
+
+  list_rooms:
+    handler: src/routes/rooms/list.handler
+    events:
+      - http:
+          method: post
+          path: /rooms/list
+          cors: true
+
+  list_chats:
+    handler: src/routes/chats/list.handler
+    events:
+      - http:
+          method: post
+          path: /chats/list
+          cors: true
+
   default:
     handler: src/websocket/default.handler
     events:
