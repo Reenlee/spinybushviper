@@ -57,6 +57,14 @@ functions:
           path: /friends/list
           cors: true
 
+  find_room:
+    handler: src/routes/rooms/find.handler
+    events:
+      - http:
+          method: post
+          path: /rooms/find
+          cors: true
+
   add_room:
     handler: src/routes/rooms/add.handler
     events:
