@@ -29,8 +29,9 @@ export const handler = async evt => {
     const { requestContext, body } = evt;
     const { connectionId, domainName, stage } = requestContext;
     const { data: payload } = JSON.parse(body);
-    const { type, senderId, recipientId, roomId } = payload;
+    const { type, senderId, recipientId, roomId, message } = payload;
     payload.id = uuid.v4();
+    payload.createdOn = new Date().getTime();
 
     if (type === 'connect') {
       await User.push({ id: senderId }, { connections: connectionId });
@@ -64,6 +65,18 @@ export const handler = async evt => {
       }
 
       await Chat.create(payload);
+    }
+
+    if (type === 'invite') {
+      const client = new AWS.ApiGatewayManagementApi({
+        apiVersion: '2018-11-29',
+        endpoint: `https://${domainName}/${stage}`,
+      });
+
+      const user = await User.find({ username: payload.username });
+      const { connections } = user;
+
+      await Promise.all(connections.map(cId => send(client, cId, payload)));
     }
 
     return {
