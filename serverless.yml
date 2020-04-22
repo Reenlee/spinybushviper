@@ -41,12 +41,28 @@ functions:
           path: /login
           cors: true
 
+  list_invites:
+    handler: src/routes/accounts/invite.handler
+    events:
+      - http:
+          method: post
+          path: /accounts/invite
+          cors: true
+
   add_friend:
     handler: src/routes/friends/add.handler
     events:
       - http:
           method: post
           path: /friends/add
+          cors: true
+
+  find_friend:
+    handler: src/routes/friends/find.handler
+    events:
+      - http:
+          method: post
+          path: /friends/find
           cors: true
 
   list_friends:
