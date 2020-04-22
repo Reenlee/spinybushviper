@@ -8,7 +8,7 @@ export const handler = async evt => {
 
     const invites = await Invite.list({
       recipientId: auth.userId,
-      active: null,
+      active: true,
     });
 
     return {

@@ -45,11 +45,13 @@ export const handler = async evt => {
 
       const data = {
         id: uuid.v4(),
+        type: payload.type,
         createdOn: new Date().getTime(),
         senderId: payload.senderId,
         recipientId: payload.recipientId,
         roomId: payload.roomId,
         message: payload.message,
+        active: true,
       };
 
       if (payload.recipientId) {
@@ -85,11 +87,13 @@ export const handler = async evt => {
       const user = await User.find({ username: payload.username });
       const { connections } = user;
       const data = {
+        id: uuid.v4(),
         type: payload.type,
+        createdOn: new Date().getTime(),
         username: auth.username,
         senderId: auth.userId,
         recipientId: user.id,
-        createdOn: new Date().getTime(),
+        active: true,
       };
 
       await Invite.create(data);

@@ -13,7 +13,7 @@ export const handler = async evt => {
     const friend = await User.find({ username });
     await User.push({ id: auth.userId }, { friends: friend.id });
     await User.push({ id: friend.id }, { friends: auth.userId });
-    await Invite.delete({ username: friend.username });
+    await Invite.delete({ senderId: friend.id, recipientId: auth.userId });
 
     return {
       statusCode: 200,
