@@ -69,7 +69,7 @@ export const handler = async evt => {
 
         await Promise.all(
           []
-            .concat(...recipients.map(r => r.connections))
+            .concat(...recipients.map(r => r.connections || []))
             .filter(cId => cId !== connectionId)
             .map(cId => send(client, cId, data))
         );
@@ -98,6 +98,62 @@ export const handler = async evt => {
 
       await Invite.create(data);
       await Promise.all(connections.map(cId => send(client, cId, data)));
+    }
+
+    if (payload.type === 'accept') {
+      const client = new AWS.ApiGatewayManagementApi({
+        apiVersion: '2018-11-29',
+        endpoint: `https://${domainName}/${stage}`,
+      });
+
+      const user = await User.find({ username: auth.username });
+      const friend = await User.find({ username: payload.username });
+      await User.push({ id: auth.userId }, { friends: friend.id });
+      await User.push({ id: friend.id }, { friends: auth.userId });
+      await Invite.delete({ senderId: friend.id, recipientId: auth.userId });
+
+      const { connections } = friend;
+      const data = {
+        type: payload.type,
+        friends: [
+          friend,
+          {
+            id: auth.userId,
+            username: auth.username,
+          },
+        ],
+      };
+
+      await Promise.all(
+        user.connections.concat(connections).map(cId => send(client, cId, data))
+      );
+    }
+
+    if (payload.type === 'add-room') {
+      const client = new AWS.ApiGatewayManagementApi({
+        apiVersion: '2018-11-29',
+        endpoint: `https://${domainName}/${stage}`,
+      });
+
+      const { name, userIds } = payload;
+      const room = await Room.create({
+        id: uuid.v4(),
+        name,
+        userIds: userIds.concat(auth.userId),
+      });
+
+      const users = await User.listIn('id', userIds.concat(auth.userId));
+
+      const data = {
+        type: payload.type,
+        room,
+      };
+
+      await Promise.all(
+        []
+          .concat(...users.map(r => r.connections || []))
+          .map(cId => send(client, cId, data))
+      );
     }
 
     return {

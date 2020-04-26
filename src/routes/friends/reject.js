@@ -7,10 +7,11 @@ export const handler = async evt => {
     const data = JSON.parse(body);
     const { username } = data;
 
-    await verifyHeader(headers);
+    const auth = await verifyHeader(headers);
 
-    const reject = await Invite.delete({ username });
+    const reject = await Invite.delete({ username, recipientId: auth.userId });
 
+    console.log(reject);
     return {
       statusCode: 200,
       body: JSON.stringify(reject),

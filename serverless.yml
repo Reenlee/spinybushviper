@@ -49,14 +49,6 @@ functions:
           path: /accounts/invite
           cors: true
 
-  add_friend:
-    handler: src/routes/friends/add.handler
-    events:
-      - http:
-          method: post
-          path: /friends/add
-          cors: true
-
   find_friend:
     handler: src/routes/friends/find.handler
     events:
@@ -73,20 +65,20 @@ functions:
           path: /friends/list
           cors: true
 
+  reject_friend:
+    handler: src/routes/friends/reject.handler
+    events:
+      - http:
+          method: post
+          path: /friends/reject
+          cors: true
+
   find_room:
     handler: src/routes/rooms/find.handler
     events:
       - http:
           method: post
           path: /rooms/find
-          cors: true
-
-  add_room:
-    handler: src/routes/rooms/add.handler
-    events:
-      - http:
-          method: post
-          path: /rooms/add
           cors: true
 
   list_rooms:
