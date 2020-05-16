@@ -6,6 +6,15 @@ custom:
     includeModules: true
     packager: 'yarn'
 
+  customDomain:
+    domainName: ${self:service}.textoing.com
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.stage}
+    certificateName: '*.textoing.com'
+    createRoute53Record: false
+    endpointType: 'edge'
+    securityPolicy: tls_1_2
+
   settings:
     MDB_USERNAME: ${ssm:reenlee-mongodb-username}
     MDB_PASSWORD: ${ssm:reenlee-mongodb-password}
@@ -23,6 +32,7 @@ provider:
 plugins:
   - serverless-offline
   - serverless-webpack
+  - serverless-domain-manager
 
 functions:
   signup:
