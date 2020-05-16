@@ -22,6 +22,9 @@ export const handler = async evt => {
 
     return {
       statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
       body: JSON.stringify({
         token,
         message: 'Successfully created a new user!',
@@ -31,6 +34,9 @@ export const handler = async evt => {
     console.log(err);
     return {
       statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
       body: JSON.stringify(err, ['name', 'message']),
     };
   }
