@@ -107,6 +107,22 @@ functions:
           path: /chats/list
           cors: true
 
+  test_get:
+    handler: src/test.handler
+    events:
+      - http:
+          method: get
+          path: /test
+          cors: true
+        
+  test_post:
+    handler: src/testpost.handler
+    events:
+      - http:
+          method: post
+          path: /test
+          cors: true
+
   default:
     handler: src/websocket/default.handler
     events:
